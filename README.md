@@ -40,8 +40,7 @@ Add something like this to your Rust repository under `.github/workflows`
 name: Build wasm binaries
 
 on:
-  push:
-    branches: [main]
+  push: [main, wasm-dev]
 
 jobs:
   build-wasm:
@@ -50,14 +49,14 @@ jobs:
     env:
       ACCESS_HEADER: user:${{ secrets.GH_ACTIONS_PAT }}@
       WASM_HUB_REPO: agora-wasm-hub
-      WASM_HUB_BRANCH: xyz-rust
+      WASM_HUB_BRANCH: ${{ github.repository }}/${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v2
       - run: |
           cargo install wasm-pack
+          wasm-pack build xyz-rust --target bundler --out-name index --out-dir ../out-dir
           git config --global user.name "Your Name"
           git config --global user.email "your@email.xyz"
-          wasm-pack build xyz-rust --target bundler --out-name index --out-dir ../out-dir
           cd out-dir
           rm .gitignore
           git add -A
@@ -67,7 +66,19 @@ jobs:
           git push -uf origin $WASM_HUB_BRANCH
 ```
 
-TODO
+Let's look at what's happening in the workflow script above:
+
+- this action will be run whenever we push code to `main` or `wasm-dev`
+- we set three important environment variables
+  - `ACCESS_HEADER`: this is the secret PAT added to the repo which authorizes
+the workflow to push to the wasm hub repo
+  - `WASM_HUB_REPO`: this is the name of the wasm repo where we are pushing the
+code
+  - `WASM_HUB_BRANCH`" this is the branch in `WASM_HUB_REPO` to which we push our
+code (e.g. `agoraxyz/some-rust-lib/some-branch`)
+- we install `wasm-pack`, build our code, set some github config variables,
+  enter the generated wasm directory and push the generated binary
+
 
 ### Use as an npm dependency
 TODO
