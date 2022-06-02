@@ -85,4 +85,12 @@ code (e.g. `some-rust-lib@some-branch`)
 You can find `build-wasm.sh` here on the `main` branch as a reference.
 
 ### Use as an npm dependency
-TODO
+
+Suppose you want to use wasm generated from `rust-repo` on the `main` branch. Then you can
+add the following to your `package.json`:
+```
+"dependencies": {
+  "my-rust": "git+https//github.com/wasm-hub.git#rust-repo@main"
+}
+```
+This will pull in the wasm code from branch `rust-repo@main` of repo `wasm-hub`.
