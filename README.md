@@ -47,38 +47,42 @@ jobs:
     name: wasm-pack build
     runs-on: ubuntu-latest
     env:
-      ACCESS_HEADER: user:${{ secrets.GH_ACTIONS_PAT }}@
-      WASM_HUB_REPO: agora-wasm-hub
-      WASM_HUB_BRANCH: ${{ github.repository }}/${{ github.ref_name }}
+      PAT: ${{ secrets.GH_ACTIONS_PAT }}
+      TARGET_REPO: organization/target-repo.git
+      TARGET_BRANCH: ${{ github.repository }}@${{ github.ref_name }}
+      WASM_DIR: rust-to-wasm
     steps:
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
+          profile: minimal
+
       - uses: actions/checkout@v2
       - run: |
           cargo install wasm-pack
-          wasm-pack build xyz-rust --target bundler --out-name index --out-dir ../out-dir
           git config --global user.name "Your Name"
           git config --global user.email "your@email.xyz"
-          cd out-dir
-          rm .gitignore
-          git add -A
-          git commit -m "Auto-generated wasm binaries"
-          git remote add origin https://${ACCESS_HEADER}github.com/agoraxyz/${WASM_HUB_REPO}.git
-          git branch -M $WASM_HUB_REPO
-          git push -uf origin $WASM_HUB_BRANCH
+          bash build-wasm.sh
 ```
 
 Let's look at what's happening in the workflow script above:
 
 - this action will be run whenever we push code to `main` or `wasm-dev`
 - we set three important environment variables
-  - `ACCESS_HEADER`: this is the secret PAT added to the repo which authorizes
+  - `PAT`: this is the secret PAT added to the repo which authorizes
 the workflow to push to the wasm hub repo
-  - `WASM_HUB_REPO`: this is the name of the wasm repo where we are pushing the
+  - `TARGET_REPO`: this is the name of the wasm repo where we are pushing the
 code
-  - `WASM_HUB_BRANCH`" this is the branch in `WASM_HUB_REPO` to which we push our
-code (e.g. `agoraxyz/some-rust-lib/some-branch`)
+  - `TARGET_BRANCH`" this is the branch in `TARGET_REPO` to which we push our
+code (e.g. `some-rust-lib@some-branch`)
+- we set up the nightly toolchain (this is optional and needed only if you use
+  unstable features)
 - we install `wasm-pack`, build our code, set some github config variables,
-  enter the generated wasm directory and push the generated binary
+  and run the `build-wasm.sh` script that will build the wasm binary
+  and push it to the target repo
 
+You can find `build-wasm.sh` here on the `main` branch as a reference.
 
 ### Use as an npm dependency
 TODO
