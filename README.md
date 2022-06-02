@@ -82,7 +82,9 @@ code (e.g. `some-rust-lib@some-branch`)
   and run the `build-wasm.sh` script that will build the wasm binary
   and push it to the target repo
 
-You can find `build-wasm.sh` here on the `main` branch as a reference.
+You can find `build-wasm.sh` here on the `main` branch as a reference. It has to be executable
+(`chmod +x build-wasm.sh`) and has to be placed in the
+[cargo manifest directory](https://doc.rust-lang.org/cargo/reference/environment-variables.html).
 
 ### Use as an npm dependency
 
