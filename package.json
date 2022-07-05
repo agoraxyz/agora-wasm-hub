@@ -1,0 +1,13 @@
+{
+  "name": "agora-zkp-triptych",
+  "version": "0.1.0",
+  "files": [
+    "agora_zkp_triptych_bg.wasm",
+    "agora_zkp_triptych.js",
+    "agora_zkp_triptych_bg.js",
+    "agora_zkp_triptych.d.ts"
+  ],
+  "module": "agora_zkp_triptych.js",
+  "types": "agora_zkp_triptych.d.ts",
+  "sideEffects": false
+}
